@@ -1,2 +1,2 @@
-# IMS-Jaipur---Bird-s-Eye-View
+ims-birds-eye-view
 Monthly Business Review Product
