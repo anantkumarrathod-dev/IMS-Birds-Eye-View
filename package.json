@@ -1,7 +1,7 @@
 {
-  "name": "ims-birds-eye-view",
+  "name": "anant-arcade",
   "version": "1.0.0",
-  "description": "IMS Jaipur Bird's Eye View Leadership Review Platform",
+  "description": "Interactive arcade-style profile gate for Anant Rathod",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
