@@ -1,14 +1,12 @@
 const express = require("express");
-const app = express();
+const path = require("path");
 
+const app = express();
 const PORT = process.env.PORT || 3000;
+const pagePath = path.join(__dirname, "index.html");
 
 app.get("/", (req, res) => {
-  res.send(`
-    <h1>🦅 IMS Bird's Eye View</h1>
-    <p>Deployment successful.</p>
-    <p>Version 1.0</p>
-  `);
+  res.sendFile(pagePath);
 });
 
 app.listen(PORT, () => {

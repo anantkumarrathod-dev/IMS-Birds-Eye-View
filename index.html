@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anant Arcade - Level 01</title>
+  <style>
+    :root {
+      --ink: #191714;
+      --paper: #f4ead7;
+      --panel: #fff8e8;
+      --line: #332a22;
+      --green: #66a061;
+      --red: #c8503f;
+      --gold: #dca74b;
+      --blue: #315d74;
+      --shadow: 10px 10px 0 rgba(25, 23, 20, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      background:
+        linear-gradient(90deg, rgba(25, 23, 20, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(25, 23, 20, 0.06) 1px, transparent 1px),
+        radial-gradient(circle at 18% 15%, rgba(220, 167, 75, 0.26), transparent 34%),
+        radial-gradient(circle at 82% 78%, rgba(49, 93, 116, 0.22), transparent 32%),
+        var(--paper);
+      background-size: 28px 28px, 28px 28px, auto, auto, auto;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 24px;
+      padding: 22px;
+    }
+
+    header,
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border: 3px solid var(--line);
+      background: rgba(255, 248, 232, 0.88);
+      box-shadow: 5px 5px 0 rgba(25, 23, 20, 0.16);
+      padding: 12px 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .coin {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 3px solid var(--line);
+      border-radius: 50%;
+      background: var(--gold);
+      font-weight: 900;
+      box-shadow: inset -4px -5px 0 rgba(25, 23, 20, 0.12);
+    }
+
+    h1,
+    h2,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(1.35rem, 4vw, 2.8rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--line);
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(102, 160, 97, 0.25);
+    }
+
+    main {
+      display: grid;
+      place-items: center;
+    }
+
+    .screen {
+      width: min(1120px, 100%);
+      display: none;
+    }
+
+    .screen.is-active {
+      display: block;
+      animation: pop 420ms cubic-bezier(0.2, 0.9, 0.1, 1);
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .access-card,
+    .game-card,
+    .clear-card {
+      border: 4px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 4vw, 34px);
+    }
+
+    .access-card {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.72fr) 1.28fr;
+      gap: clamp(22px, 5vw, 52px);
+      align-items: center;
+    }
+
+    .qr-box {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1;
+      border: 4px solid var(--line);
+      background: #fefdf6;
+      padding: 18px;
+      transform: rotate(-2deg);
+    }
+
+    .qr-grid {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(9, 1fr);
+      gap: 4px;
+    }
+
+    .qr-grid span {
+      background: var(--ink);
+    }
+
+    .qr-grid span:nth-child(3n),
+    .qr-grid span:nth-child(5n + 1),
+    .qr-grid span:nth-child(7n + 2) {
+      background: var(--gold);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 14px;
+      padding: 7px 10px;
+      border: 2px solid var(--line);
+      background: var(--green);
+      color: #fff8e8;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .access-card h2,
+    .game-card h2,
+    .clear-card h2 {
+      max-width: 760px;
+      font-size: clamp(2.15rem, 8vw, 5.8rem);
+      line-height: 0.86;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      max-width: 680px;
+      margin-top: 18px;
+      font-size: clamp(1rem, 2vw, 1.22rem);
+      line-height: 1.45;
+    }
+
+    .arcade-button {
+      margin-top: 26px;
+      border: 3px solid var(--line);
+      background: var(--red);
+      color: #fff8e8;
+      box-shadow: 5px 5px 0 var(--line);
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 900;
+      text-transform: uppercase;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .arcade-button:hover,
+    .arcade-button:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 var(--line);
+      outline: none;
+    }
+
+    .hud {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .hud p {
+      max-width: 520px;
+      margin-top: 10px;
+      line-height: 1.45;
+    }
+
+    .score {
+      min-width: 130px;
+      border: 3px solid var(--line);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 12px;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .score strong {
+      display: block;
+      font-size: 2rem;
+      color: var(--gold);
+    }
+
+    .arena {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .deck,
+    .slots {
+      display: grid;
+      gap: 14px;
+    }
+
+    .portrait,
+    .drop-zone {
+      min-height: 178px;
+      border: 3px solid var(--line);
+      background: #fffdf3;
+      padding: 14px;
+    }
+
+    .portrait {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 14px;
+      align-items: center;
+      cursor: grab;
+      box-shadow: 5px 5px 0 rgba(25, 23, 20, 0.12);
+      touch-action: none;
+    }
+
+    .portrait.is-dragging {
+      opacity: 0.42;
+    }
+
+    .avatar {
+      width: 96px;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 45%),
+        var(--blue);
+      color: #fff8e8;
+      font-size: 2.2rem;
+      font-weight: 900;
+    }
+
+    .portrait[data-player="thespian"] .avatar {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 45%),
+        var(--red);
+    }
+
+    .portrait h3,
+    .drop-zone h3 {
+      margin: 0 0 6px;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+    }
+
+    .portrait p,
+    .drop-zone p {
+      line-height: 1.35;
+    }
+
+    .drop-zone {
+      display: grid;
+      align-content: center;
+      gap: 8px;
+      background:
+        repeating-linear-gradient(-45deg, rgba(25, 23, 20, 0.04) 0 8px, transparent 8px 18px),
+        #fffdf3;
+      position: relative;
+      transition: transform 160ms ease, background 160ms ease;
+    }
+
+    .drop-zone::after {
+      content: "Drop profile picture here";
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      opacity: 0.45;
+    }
+
+    .drop-zone.is-over {
+      transform: translate(-2px, -2px);
+      background: rgba(220, 167, 75, 0.18);
+    }
+
+    .drop-zone.is-correct {
+      background: rgba(102, 160, 97, 0.2);
+    }
+
+    .drop-zone.is-wrong {
+      background: rgba(200, 80, 63, 0.2);
+      animation: shake 260ms linear;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-7px); }
+      75% { transform: translateX(7px); }
+    }
+
+    .placed {
+      border-color: var(--green);
+      background: rgba(102, 160, 97, 0.1);
+      cursor: default;
+    }
+
+    .message {
+      min-height: 22px;
+      margin-top: 18px;
+      font-weight: 900;
+      color: var(--blue);
+      text-transform: uppercase;
+    }
+
+    .clear-card {
+      text-align: left;
+    }
+
+    .next-panels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .next-panels article {
+      min-height: 130px;
+      border: 3px solid var(--line);
+      background: #fffdf3;
+      padding: 14px;
+    }
+
+    .next-panels h3 {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    footer {
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 820px) {
+      .shell {
+        padding: 14px;
+      }
+
+      header,
+      footer,
+      .hud {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .access-card,
+      .arena,
+      .next-panels {
+        grid-template-columns: 1fr;
+      }
+
+      .qr-box {
+        max-width: 280px;
+        margin-inline: auto;
+      }
+
+      .portrait {
+        grid-template-columns: 76px 1fr;
+      }
+
+      .avatar {
+        width: 76px;
+        font-size: 1.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="coin">A</div>
+        <div>
+          <h1>Anant Arcade</h1>
+          <p>Level 01: Player Identity Gate</p>
+        </div>
+      </div>
+      <div class="status" id="accessStatus">QR access ready</div>
+    </header>
+
+    <main>
+      <section class="screen is-active" id="accessScreen" aria-labelledby="accessTitle">
+        <div class="access-card">
+          <div class="qr-box" aria-label="Stylized QR access code">
+            <div class="qr-grid" aria-hidden="true">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div>
+            <span class="eyebrow">Scan detected</span>
+            <h2 id="accessTitle">Access the cabinet</h2>
+            <p class="lede">The first screen behaves like the QR entry point. After access, choose between two Anant players by matching the correct profile picture to the right role.</p>
+            <button class="arcade-button" id="startButton" type="button">Insert scan and play</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="gameScreen" aria-labelledby="gameTitle">
+        <div class="game-card">
+          <div class="hud">
+            <div>
+              <span class="eyebrow">Drag and drop</span>
+              <h2 id="gameTitle">Select player</h2>
+              <p>Place each profile picture in the matching slot. These are temporary portrait tokens until the real pictures arrive in the next update.</p>
+            </div>
+            <div class="score" aria-live="polite">Matches<strong id="matchCount">0/2</strong></div>
+          </div>
+
+          <div class="arena">
+            <div class="deck" aria-label="Profile pictures">
+              <article class="portrait" draggable="true" data-player="consultant" id="consultantCard" tabindex="0">
+                <div class="avatar">AC</div>
+                <div>
+                  <h3>Anant</h3>
+                  <p>Consultant portrait placeholder. Built for strategy, structure, and boardroom mode.</p>
+                </div>
+              </article>
+
+              <article class="portrait" draggable="true" data-player="thespian" id="thespianCard" tabindex="0">
+                <div class="avatar">AT</div>
+                <div>
+                  <h3>Anant</h3>
+                  <p>Thespian portrait placeholder. Built for stage presence, story, and performance mode.</p>
+                </div>
+              </article>
+            </div>
+
+            <div class="slots" aria-label="Player slots">
+              <section class="drop-zone" data-accepts="consultant" tabindex="0">
+                <h3>Anant - Consultant</h3>
+                <p>Drop the consultant profile picture here to unlock the professional path.</p>
+              </section>
+
+              <section class="drop-zone" data-accepts="thespian" tabindex="0">
+                <h3>Anant - Thespian</h3>
+                <p>Drop the thespian profile picture here to unlock the performance path.</p>
+              </section>
+            </div>
+          </div>
+
+          <p class="message" id="message" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="screen" id="clearScreen" aria-labelledby="clearTitle">
+        <div class="clear-card">
+          <span class="eyebrow">Level complete</span>
+          <h2 id="clearTitle">Player files unlocked</h2>
+          <p class="lede">Both Anant profiles are matched. This page is ready for the next update, where each new level can reveal another piece of information.</p>
+          <div class="next-panels">
+            <article>
+              <h3>Next level</h3>
+              <p>Add the first personal fact, achievement, or story beat after the match clears.</p>
+            </article>
+            <article>
+              <h3>Real photos</h3>
+              <p>Replace the two portrait placeholders with the uploaded Consultant and Thespian pictures.</p>
+            </article>
+            <article>
+              <h3>Arcade loop</h3>
+              <p>Repeat the pattern: play a small challenge, unlock new information, then continue.</p>
+            </article>
+          </div>
+          <button class="arcade-button" id="resetButton" type="button">Replay level</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>QR entry prototype</span>
+      <span>Level system ready for future profile content</span>
+    </footer>
+  </div>
+
+  <script>
+    const screens = {
+      access: document.getElementById("accessScreen"),
+      game: document.getElementById("gameScreen"),
+      clear: document.getElementById("clearScreen")
+    };
+    const status = document.getElementById("accessStatus");
+    const message = document.getElementById("message");
+    const matchCount = document.getElementById("matchCount");
+    const deck = document.querySelector(".deck");
+    const zones = Array.from(document.querySelectorAll(".drop-zone"));
+    const cards = Array.from(document.querySelectorAll(".portrait"));
+    let matches = 0;
+    let activeCard = null;
+
+    function showScreen(name) {
+      Object.values(screens).forEach((screen) => screen.classList.remove("is-active"));
+      screens[name].classList.add("is-active");
+    }
+
+    function updateScore() {
+      matchCount.textContent = `${matches}/2`;
+      if (matches === 2) {
+        status.textContent = "Level 01 clear";
+        setTimeout(() => showScreen("clear"), 650);
+      }
+    }
+
+    function placeCard(card, zone) {
+      if (!card || zone.classList.contains("is-correct")) return;
+
+      const isCorrect = card.dataset.player === zone.dataset.accepts;
+      zone.classList.remove("is-over", "is-wrong");
+
+      if (!isCorrect) {
+        zone.classList.add("is-wrong");
+        message.textContent = "Wrong slot. Try the other Anant.";
+        setTimeout(() => zone.classList.remove("is-wrong"), 320);
+        return;
+      }
+
+      card.classList.add("placed");
+      card.setAttribute("draggable", "false");
+      card.setAttribute("aria-label", `${zone.querySelector("h3").textContent} matched`);
+      zone.classList.add("is-correct");
+      zone.appendChild(card);
+      matches += 1;
+      message.textContent = `${zone.querySelector("h3").textContent} matched.`;
+      updateScore();
+    }
+
+    cards.forEach((card) => {
+      card.addEventListener("dragstart", (event) => {
+        activeCard = card;
+        card.classList.add("is-dragging");
+        event.dataTransfer.setData("text/plain", card.dataset.player);
+      });
+
+      card.addEventListener("dragend", () => {
+        card.classList.remove("is-dragging");
+        activeCard = null;
+      });
+
+      card.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        activeCard = card;
+        message.textContent = `Selected ${card.dataset.player}. Press Enter on the matching slot.`;
+      });
+    });
+
+    zones.forEach((zone) => {
+      zone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        zone.classList.add("is-over");
+      });
+
+      zone.addEventListener("dragleave", () => zone.classList.remove("is-over"));
+
+      zone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        placeCard(activeCard, zone);
+      });
+
+      zone.addEventListener("keydown", (event) => {
+        if ((event.key === "Enter" || event.key === " ") && activeCard) {
+          event.preventDefault();
+          placeCard(activeCard, zone);
+          activeCard = null;
+        }
+      });
+    });
+
+    document.getElementById("startButton").addEventListener("click", () => {
+      status.textContent = "Level 01 active";
+      showScreen("game");
+    });
+
+    document.getElementById("resetButton").addEventListener("click", () => {
+      matches = 0;
+      activeCard = null;
+      message.textContent = "";
+      status.textContent = "QR access ready";
+      matchCount.textContent = "0/2";
+      zones.forEach((zone) => {
+        zone.classList.remove("is-correct", "is-wrong", "is-over");
+      });
+      cards.forEach((card) => {
+        card.classList.remove("placed", "is-dragging");
+        card.setAttribute("draggable", "true");
+        deck.appendChild(card);
+      });
+      showScreen("access");
+    });
+  </script>
+</body>
+</html>
